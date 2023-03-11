@@ -30,6 +30,7 @@ public class Machine {
             p.msg_name = "GO FOR THE HEAD!!";
             System.out.printf("IP AC: ");
             p.destination_ip = sc.next();
+            
             if (p.destination_ip.length() != 0) {
             	oos.writeObject(p);
             }
@@ -46,15 +47,16 @@ public class Machine {
 						
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
             	}
             };
             
             Thread t = new Thread(recv);
+            t.start();
               
             ois.close();
             oos.close();
