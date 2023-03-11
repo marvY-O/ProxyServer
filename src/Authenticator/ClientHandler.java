@@ -45,10 +45,10 @@ class ClientHandler implements Runnable {
 								}
 							} catch (ClassNotFoundException e) {
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								//e.printStackTrace();
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								//e.printStackTrace();
 							}
                 	}
                 	
