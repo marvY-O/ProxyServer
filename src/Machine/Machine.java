@@ -51,11 +51,14 @@ public class Machine {
             		while (true) {
             			try {
     						p = (Packet) ois.readObject();
-    						if (p.payload.length == 0) {
-    							break;
+    						if (p != null) {
+    							if (p.payload.length == 0) {
+        							break;
+        						}
+        						//System.out.println(p.msg_name);
+        						receiveBuffer.add(p);
     						}
-    						//System.out.println(p.msg_name);
-    						receiveBuffer.add(p);
+    						
     						
     					} catch (ClassNotFoundException e) {
 
@@ -94,9 +97,9 @@ public class Machine {
             
             
             
-            System.out.println("Recieve file(y) or send file(n)?");
+            System.out.printf("Recieve file(y) or send file(n)?");
             String ans = sc.next();
-            if (ans == "y") {
+            if (ans.equals("y")) {
             	Thread receivePacketsThread = new Thread(receivePackets);
                 receivePacketsThread.start();
             }
