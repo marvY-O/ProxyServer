@@ -34,24 +34,31 @@ public class Machine {
             if (p.destination_ip.length() != 0) {
             	oos.writeObject(p);
             }
+            else {
+            	System.out.println("Listening for data!");
+            }
             
             
             Runnable recv = new Runnable() {
             	@Override
             	public void run() {
             		Packet p;
-					try {
-						p = (Packet) ois.readObject();
-						//if (p.destination_ip == InetAddress.getLocalHost().getHostAddress());
-						System.out.println(p.msg_name);
-						
-					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						//e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						//e.printStackTrace();
-					}
+            		System.out.println("Recv Started!");
+            		while (true) {
+            			try {
+    						p = (Packet) ois.readObject();
+    						//if (p.destination_ip == InetAddress.getLocalHost().getHostAddress());
+    						System.out.println(p.msg_name);
+    						
+    					} catch (ClassNotFoundException e) {
+    						// TODO Auto-generated catch block
+    						//e.printStackTrace();
+    					} catch (IOException e) {
+    						// TODO Auto-generated catch block
+    						//e.printStackTrace();
+    					}
+            		}
+					
             	}
             };
             
