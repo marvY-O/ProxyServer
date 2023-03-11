@@ -59,7 +59,7 @@ class ClientHandler implements Runnable {
                 @Override
                 public void run() {
                     //System.out.println("Hello from thread " + Thread.currentThread().getName());
-                	//while (true) {
+                	while (true) {
                 		if (buffer.get(s.getInetAddress()).size() == 0) continue;
                 		synchronized (buffer) {
 	            			Packet curPacket = buffer.get(s.getInetAddress()).peek();
@@ -70,7 +70,7 @@ class ClientHandler implements Runnable {
 	            				e.printStackTrace();
 	            			}
                 		}
-                	//}
+                	}
                 	
                 }
             };

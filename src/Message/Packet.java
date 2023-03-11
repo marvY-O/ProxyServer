@@ -1,6 +1,9 @@
 package Message;
 
-public class Packet {
+import java.io.Serializable;
+
+public class Packet implements Serializable{
+	private static final long serialVersionUID = 1L;
 	public String client_name;
 	public String client_ip;
 	public String destination_ip;
