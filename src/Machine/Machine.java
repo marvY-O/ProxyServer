@@ -31,7 +31,7 @@ public class Machine {
             System.out.printf("IP AC: ");
             p.destination_ip = sc.next();
             
-            if (p.destination_ip.length() != 0) {
+            if (p.destination_ip.length() != 1) {
             	oos.writeObject(p);
             }
             else {
