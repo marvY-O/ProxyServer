@@ -52,10 +52,11 @@ public class Machine {
             			try {
     						p = (Packet) ois.readObject();
     						if (p != null) {
+    							System.out.println("Got packet: "+p.pkt_id);
     							if (p.payload.length == 0) {
         							break;
         						}
-        						System.out.println("Got packet: "+p.pkt_id);
+        						
         						receiveBuffer.add(p);
     						}
     						
@@ -107,11 +108,13 @@ public class Machine {
             	String path, destIP, clientIP = InetAddress.getByName("localhost").getHostAddress();
                 
                 System.out.printf("Name file to send: ");
-                path = sc.next();
+                //path = sc.next();
+                path = "test.txt";
                 
                 System.out.printf("IP of Destination: ");
-                destIP = sc.next();
-
+                //destIP = sc.next();
+                destIP = "192.168.1.7";
+                
                 byte[] file;
                 File fileobj = new File(path);
 
@@ -180,6 +183,7 @@ public class Machine {
     	            		synchronized(buffer) {
     	            			if (!buffer.isEmpty()) {
     	            				try {
+    	            					System.out.println("Sent: " + buffer.peek().pkt_id);
     	            					oos.writeObject(buffer.poll());
     	            				}
     	            				catch (IOException e) {
@@ -188,6 +192,8 @@ public class Machine {
     	            			}
     	            		}
                 		}
+                		
+                		
                 		
                 	}
                 };
