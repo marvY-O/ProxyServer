@@ -109,8 +109,6 @@ public class Machine {
                 System.out.printf("IP of Destination: ");
                 destIP = sc.next();
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); 
-
                 byte[] file;
                 File fileobj = new File(path);
 

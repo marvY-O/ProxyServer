@@ -3,7 +3,8 @@ package Message;
 import java.io.Serializable;
 
 public class Packet implements Serializable {
-    public String client_name;
+    private static final long serialVersionUID = 1L;
+	public String client_name;
     public String client_ip;
     public String destination_ip;
     public byte[] payload;
