@@ -53,7 +53,7 @@ public class Machine {
     						p = (Packet) ois.readObject();
     						if (p != null) {
     							System.out.println("Got packet: "+p.pkt_id);
-    							if (p.payload.length == 0) {
+    							if (p.pkt_id == -1) {
         							break;
         						}
         						
@@ -142,7 +142,8 @@ public class Machine {
                 	public void run() {
                 		int index = 0;
                         //Packet[] pkts = new Packet[pkt_total];
-                        for (int i=0; i<pkt_total; i++){
+                        for (int i=0; i<pkt_total+1; i++){
+                        	System.out.println("Creating: " + i);
                             Packet pkt= new Packet(pyld_size);
                             pkt.client_name = "localhost";
                             pkt.client_ip = clientIP;
@@ -163,12 +164,9 @@ public class Machine {
                             }
                         }
                         Packet end = new Packet(0);
-                        try {
-                        	oos.writeObject(end);
-                        }
-                        catch(IOException e) {
-                        	
-                        }
+                        end.pkt_id = -1;
+                        buffer.add(end);
+
      
                 	}
                 };
