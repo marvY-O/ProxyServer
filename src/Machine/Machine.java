@@ -1,5 +1,6 @@
 package Machine;
 import java.io.*;  
+import java.util.*;
 import java.net.*; 
 import Message.*; 
 
@@ -15,6 +16,7 @@ public class Machine {
     }
 
     public void initiate() throws IOException{
+    	Scanner sc = new Scanner(System.in);
         try{
 
             Socket s = new Socket(ac_address, ac_port);
@@ -26,8 +28,12 @@ public class Machine {
             
             Packet p = new Packet(0);
             p.msg_name = "GO FOR THE HEAD!!";
-            p.destination_ip = "192.168.1.0";
-            oos.writeObject(p);
+            System.out.printf("IP AC: ");
+            p.destination_ip = sc.next();
+            if (p.destination_ip.length() != 0) {
+            	oos.writeObject(p);
+            }
+            
             
             Runnable recv = new Runnable() {
             	@Override
