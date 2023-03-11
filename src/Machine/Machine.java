@@ -58,9 +58,10 @@ public class Machine {
             Thread t = new Thread(recv);
             t.start();
               
-            ois.close();
-            oos.close();
-            s.close();
+            //ois.close();
+            //oos.close();
+            //s.close();
+            
         }catch(Exception e){
             e.printStackTrace();
         }
