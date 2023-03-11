@@ -55,7 +55,7 @@ public class Machine {
     							if (p.payload.length == 0) {
         							break;
         						}
-        						//System.out.println(p.msg_name);
+        						System.out.println("Got packet: "+p.pkt_id);
         						receiveBuffer.add(p);
     						}
     						
@@ -180,7 +180,7 @@ public class Machine {
     	            		synchronized(buffer) {
     	            			if (!buffer.isEmpty()) {
     	            				try {
-    	            					oos.writeObject(buffer.peek());
+    	            					oos.writeObject(buffer.poll());
     	            				}
     	            				catch (IOException e) {
     	            					
