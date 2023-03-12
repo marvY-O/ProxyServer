@@ -56,6 +56,8 @@ class ClientHandler implements Runnable {
     		if (dbUsers.verify(cert.username, cert.password)) {
     			cert.CertificateID = generate();
     			certIDStore.put(s.getInetAddress(), cert.CertificateID);
+    			System.out.print(s.getInetAddress());
+    			System.out.print(cert.CertificateID + "\n");
     		}
     		else {
     			cert.CertificateID = "NULL";
@@ -73,7 +75,7 @@ class ClientHandler implements Runnable {
 								p = (Packet) ois.readObject();
 								//if (p.destination_ip == InetAddress.getLocalHost().getHostAddress());
 								InetAddress destAddr = InetAddress.getByName(p.destination_ip);
-								if (p.cert_id != certIDStore.get(s.getInetAddress())){
+								if (!p.cert_id.equals(certIDStore.get(s.getInetAddress()))){
 									System.out.println("FALSE Security Certificate ID!!");
 									continue;
 								}
@@ -100,15 +102,18 @@ class ClientHandler implements Runnable {
 
                 	while (true) {
                 		if (buffer.get(s.getInetAddress()).size() == 0) continue;
+                		Packet curPacket;
                 		synchronized (buffer) {
-	            			Packet curPacket = buffer.get(s.getInetAddress()).peek();
+	            			curPacket = buffer.get(s.getInetAddress()).peek();
 	            			buffer.get(s.getInetAddress()).poll();
-	            			try {
-	            				oos.writeObject(curPacket);
-	            			} catch(IOException e) {
-	            				e.printStackTrace();
-	            			}
                 		}
+            			try {
+            				curPacket.cert_id = certIDStore.get(s.getInetAddress());
+            				oos.writeObject(curPacket);
+            			} catch(IOException e) {
+            				e.printStackTrace();
+            			}
+                		
                 	}
                 	
                 }

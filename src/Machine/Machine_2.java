@@ -30,102 +30,6 @@ public class Machine_2 {
             ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
             System.out.println("Connected to server!!");
             
-            Runnable receivePackets = new Runnable() {
-            	@Override
-            	public void run() {
-            		Packet p;
-            		int totalPkts = 0;
-            		int byteLength = 0;
-            		System.out.println("Recv Started!");
-            		while (true) {
-            			try {
-    						p = (Packet) ois.readObject();
-    						if (p != null) {
-        						if (p.pkt_id == -1) {
-        							totalPkts = Integer.parseInt(p.msg_name);
-        							byteLength = p.pkt_no;
-        							System.out.println("Ready to receive "+totalPkts+" from "+p.client_ip);
-        						}
-        						else if (p.pkt_id == totalPkts) {
-        							buffer.add(p);
-        							System.out.printf("Received %d packets from %s",totalPkts, p.client_ip);
-        							break;
-        						}
-        						else {
-        							int cnt = Math.round(p.pkt_id*20/totalPkts);
-        							String cur = "|";
-        				            for (int i=0; i<20; i++) {
-        				    			if (i < cnt) {
-        				                    cur += "=";
-        				    			}
-        				    			else if (i == cnt) {
-        				                    cur += ">";
-        				    			}
-        				    			else {
-        				                    cur += " ";
-        				    			}
-        				    		}
-        				            cur +="|" + p.pkt_id + "/" + totalPkts + "\r";
-        				    		System.out.printf(cur);
-        							
-        							receiveBuffer.add(p);
-        						}
-    						}
-    						
-    						
-    					} catch (ClassNotFoundException e) {
-    						System.out.printf("Error reading packets (Undefined Format): ");
-    						e.printStackTrace();
-    						try {
-    							oos.close();
-								ois.close();
-								s.close();
-							} catch (IOException e1) {
-								System.out.printf("Error closing connection: ");
-								e1.printStackTrace();
-							}
-    					} catch (IOException e) {
-    						System.out.printf("Error receiving packets!!");
-    						e.printStackTrace();
-    						try {
-    							oos.close();
-								ois.close();
-								s.close();
-							} catch (IOException e1) {
-								System.out.printf("Error closing connection: ");
-								e1.printStackTrace();
-							}
-    						
-    					}
-            		}
-            		
-            		System.out.println("Creating File!!");
-            		Vector<Byte> file = new Vector<Byte>();
-            		final String outputPath = receiveBuffer.peek().msg_name; 
-            		
-            		System.out.printf("Received "+outputPath+"from "+receiveBuffer.peek().client_ip+"\n");
-            		
-                   byte[] byteFile = new byte[byteLength];
-                   int i = 0;
-                   while (!receiveBuffer.isEmpty()){
-                   	Packet pkt = receiveBuffer.poll();
-                       for (int j=0; j<pkt.payload.length && i<byteLength; j++){
-                           byteFile[i++] = pkt.payload[j];
-                       }
-                   }
-                    
-                    try {
-	            		FileOutputStream fos = new FileOutputStream(outputPath);
-	                    fos.write(byteFile);
-	                    fos.close();
-	                    System.out.printf("File Saved to disk!\n");
-                    }
-                    catch(IOException e) {
-                    	System.out.println("Error Saving file to disk!");
-                    }
-					
-            	}
-            };
             
             String user, pass, certID;
             SecurityCertificate cert = new SecurityCertificate();
@@ -156,10 +60,112 @@ public class Machine_2 {
     		}	
             
     		certID = cert.CertificateID;
+    		System.out.println("Security ID: "+certID);
             
             System.out.printf("Recieve file(y) or send file(n)?");
             String ans = sc.next();
             if (ans.equals("y")) {
+				Runnable receivePackets = new Runnable() {
+					@Override
+					public void run() {
+						Packet p;
+						int totalPkts = 0;
+						int byteLength = 0;
+						System.out.println("Recv Started!");
+						while (true) {
+							try {
+								p = (Packet) ois.readObject();
+								if (p != null) {
+									if (!p.cert_id.equals(certID)) {
+										System.out.println("SECURITY CERTIFICATE MISMATCH!\n");
+										return;
+									}
+									if (p.pkt_id == -1) {
+										totalPkts = Integer.parseInt(p.msg_name);
+										byteLength = p.pkt_no;
+										System.out.println("Ready to receive "+totalPkts+" from "+p.client_ip);
+									}
+									else if (p.pkt_id == totalPkts) {
+										buffer.add(p);
+										System.out.printf("Received %d packets from %s",totalPkts, p.client_ip);
+										break;
+									}
+									else {
+										int cnt = Math.round(p.pkt_id*20/totalPkts);
+										String cur = "|";
+										for (int i=0; i<20; i++) {
+											if (i < cnt) {
+												cur += "=";
+											}
+											else if (i == cnt) {
+												cur += ">";
+											}
+											else {
+												cur += " ";
+											}
+										}
+										cur +="|" + p.pkt_id + "/" + totalPkts + "\r";
+										System.out.printf(cur);
+										
+										receiveBuffer.add(p);
+									}
+								}
+								
+								
+							} catch (ClassNotFoundException e) {
+								System.out.printf("Error reading packets (Undefined Format): ");
+								e.printStackTrace();
+								try {
+									oos.close();
+									ois.close();
+									s.close();
+								} catch (IOException e1) {
+									System.out.printf("Error closing connection: ");
+									e1.printStackTrace();
+								}
+							} catch (IOException e) {
+								System.out.printf("Error receiving packets!!");
+								e.printStackTrace();
+								try {
+									oos.close();
+									ois.close();
+									s.close();
+								} catch (IOException e1) {
+									System.out.printf("Error closing connection: ");
+									e1.printStackTrace();
+								}
+								
+							}
+						}
+						
+						System.out.println("Creating File!!");
+						Vector<Byte> file = new Vector<Byte>();
+						final String outputPath = receiveBuffer.peek().msg_name; 
+						
+						System.out.printf("Received "+outputPath+"from "+receiveBuffer.peek().client_ip+"\n");
+						
+					   byte[] byteFile = new byte[byteLength];
+					   int i = 0;
+					   while (!receiveBuffer.isEmpty()){
+						   Packet pkt = receiveBuffer.poll();
+						   for (int j=0; j<pkt.payload.length && i<byteLength; j++){
+							   byteFile[i++] = pkt.payload[j];
+						   }
+					   }
+						
+						try {
+							FileOutputStream fos = new FileOutputStream(outputPath);
+							fos.write(byteFile);
+							fos.close();
+							System.out.printf("File Saved to disk!\n");
+						}
+						catch(IOException e) {
+							System.out.println("Error Saving file to disk!");
+						}
+						
+					}
+				};
+				
             	Thread receivePacketsThread = new Thread(receivePackets);
                 receivePacketsThread.start();
             }
@@ -206,6 +212,7 @@ public class Machine_2 {
         		initPkt.msg_name = Integer.toString(pkt_total);
         		initPkt.pkt_id = -1;
         		initPkt.pkt_no = file.length;
+        		initPkt.cert_id = certID;
         		buffer.add(initPkt);
         		
                 for (int i=0; i<pkt_total; i++){
@@ -233,15 +240,14 @@ public class Machine_2 {
             		
             			if (!buffer.isEmpty()) {
             				try {
-            					//System.out.println("Sent: " + buffer.peek().pkt_id);
             					Packet p = buffer.peek();
             					oos.writeObject(buffer.poll());
             					if (p.pkt_id == -1) {
             						totalPkts = Integer.parseInt(p.msg_name);
-            						System.out.printf("Sending %d packets to %s", totalPkts, p.destination_ip);
+            						System.out.printf("Sending %d packets to %s\n", totalPkts, p.destination_ip);
             					}
             					else if (p.pkt_id == totalPkts) {
-            						System.out.printf("Sent %d packets to %s",totalPkts, p.destination_ip);
+            						System.out.printf("Sent %d packets to %s\n",totalPkts, p.destination_ip);
             					}
             					else {
         							int cnt = Math.round(p.pkt_id*20/totalPkts);
@@ -261,7 +267,7 @@ public class Machine_2 {
         				    		System.out.printf(cur);
         							
             					}
-            					Thread.sleep(1);
+            					//Thread.sleep(1);
             				}
             				catch (IOException e) {
             					System.out.printf("Error sending packets: ");
