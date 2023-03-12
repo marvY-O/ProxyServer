@@ -7,14 +7,15 @@ import Message.*;
 
 public class Machine{
     //private InetAddress selfAddress;
-    String ac_address;
+    String ac_address, clientIP;
     int ac_port;
     Queue<Packet> buffer;
     Queue<Packet> receiveBuffer;
 
-    public Machine(String ac_address, int ac_port) throws IOException{
+    public Machine(String ac_address, int ac_port, String clientIP) throws IOException{
         //selfAddress  = Binder.getAddress();
         this.ac_address = ac_address;
+        this.clientIP = clientIP;
         this.ac_port = ac_port;
         this.buffer = new LinkedList<Packet>();
         this.receiveBuffer = new LinkedList<Packet>();
@@ -64,8 +65,7 @@ public class Machine{
             
             System.out.printf("1.Receive file\n2.Send file\n\n>>");
             int x = sc.nextInt();
-            
-            String ans = sc.next();
+
             if (x == 1) {
 				Runnable receivePackets = new Runnable() {
 					@Override
@@ -73,7 +73,7 @@ public class Machine{
 						Packet p;
 						int totalPkts = 0;
 						int byteLength = 0;
-						System.out.println("Recv Started!");
+
 						while (true) {
 							try {
 								p = (Packet) ois.readObject();
@@ -89,7 +89,7 @@ public class Machine{
 									}
 									else if (p.pkt_id == totalPkts) {
 										buffer.add(p);
-										System.out.printf("Received %d packets from %s",totalPkts, p.client_ip);
+										System.out.printf("Received %d packets from %s\n",totalPkts, p.client_ip);
 										break;
 									}
 									else {
@@ -139,12 +139,11 @@ public class Machine{
 								
 							}
 						}
-						
-						System.out.println("Creating File!!");
+
 						Vector<Byte> file = new Vector<Byte>();
 						final String outputPath = receiveBuffer.peek().msg_name; 
 						
-						System.out.printf("Received "+outputPath+"from "+receiveBuffer.peek().client_ip+"\n");
+						System.out.printf("Received "+outputPath+" from "+receiveBuffer.peek().client_ip+"\n");
 						
 					   byte[] byteFile = new byte[byteLength];
 					   int i = 0;
@@ -174,7 +173,7 @@ public class Machine{
                 System.out.println("Listening for packets..");
             }
             else if (x == 2) {
-            	String path, destIP, clientIP = InetAddress.getByName("localhost").getHostAddress();
+            	String path, destIP;
                 
                 System.out.printf("Name file to send: ");
                 path = sc.next();

@@ -9,16 +9,18 @@ public class Authenticator {
     int port;
     HashMap<InetAddress, Queue<Packet>> buffer;
     HashMap<InetAddress, String> certIDStore;
+    String serverIP;
     
-    public Authenticator(int port) {
+    public Authenticator(int port, String serverIP) {
         this.port = port;
         buffer = new HashMap<InetAddress, Queue<Packet>>();
         certIDStore = new HashMap<InetAddress, String>();
+        this.serverIP = serverIP;
     }
 
     public void start() throws IOException{
         ServerSocket ss = new ServerSocket(port);
-
+        System.out.printf("Server started at %s:%d", serverIP, port);
         while (true){
             Socket s = null; 
             try {
