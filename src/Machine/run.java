@@ -13,7 +13,7 @@ public class run {
     	//int port = sc.nextInt();
         int  port = 5000;
         
-        Machine m = new Machine(ac_address, port);
+        Machine_2 m = new Machine_2(ac_address, port);
         m.initiate();
     }
 }
