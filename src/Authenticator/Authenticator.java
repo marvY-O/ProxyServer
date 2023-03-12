@@ -20,7 +20,7 @@ public class Authenticator {
 
     public void start() throws IOException{
         ServerSocket ss = new ServerSocket(port);
-        System.out.printf("Server started at %s:%d", serverIP, port);
+        System.out.printf("Server started at %s:%d\n", serverIP, port);
         while (true){
             Socket s = null; 
             try {

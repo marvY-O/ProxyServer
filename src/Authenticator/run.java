@@ -7,7 +7,7 @@ public class run {
     public static void main(String args[]) throws IOException{
         int ac_port = 5000;
         String serverIP = "127.0.0.1";
-        System.out.println("Server started at address: ");
+
         try {
             Enumeration<NetworkInterface> networkInterfaceEnumeration = NetworkInterface.getNetworkInterfaces();
             while( networkInterfaceEnumeration.hasMoreElements()){
