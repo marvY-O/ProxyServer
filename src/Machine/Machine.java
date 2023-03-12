@@ -140,7 +140,6 @@ public class Machine{
 							}
 						}
 
-						Vector<Byte> file = new Vector<Byte>();
 						final String outputPath = receiveBuffer.peek().msg_name; 
 						
 						System.out.printf("Received "+outputPath+" from "+receiveBuffer.peek().client_ip+"\n");
@@ -163,7 +162,6 @@ public class Machine{
 						catch(IOException e) {
 							System.out.println("Error Saving file to disk!");
 						}
-						
 					}
 				};
 				
@@ -171,6 +169,7 @@ public class Machine{
                 receivePacketsThread.start();
                 
                 System.out.println("Listening for packets..");
+				return;
             }
             else if (x == 2) {
             	String path, destIP;
@@ -249,6 +248,7 @@ public class Machine{
             					}
             					else if (p.pkt_id == totalPkts) {
             						System.out.printf("Sent %d packets to %s\n",totalPkts, p.destination_ip);
+									break;
             					}
             					else {
         							int cnt = Math.round(p.pkt_id*20/totalPkts);
@@ -288,9 +288,7 @@ public class Machine{
         		}
             }
                 		
-            
-            
-            
+
         }catch(Exception e){
         	System.out.printf("There was an error connecting to the server: ");
             e.printStackTrace();
