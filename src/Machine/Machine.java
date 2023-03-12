@@ -49,20 +49,22 @@ public class Machine {
         							break;
         						}
         						else {
-        							System.out.printf("|");
-        							int cnt = (p.pkt_id/totalPkts)*20;
-        							for (int i=0; i<20; i++) {
-        								if (i < cnt) {
-        									System.out.printf("=");
-        								}
-        								else if (i == cnt) {
-        									System.out.printf(">");
-        								}
-        								else {
-        									System.out.printf(" ");
-        								}
-        							}
-        							System.out.printf("|\r");
+        							int cnt = Math.round(p.pkt_id*20/totalPkts);
+        							String cur = "|";
+        				            for (int i=0; i<20; i++) {
+        				    			if (i < cnt) {
+        				                    cur += "=";
+        				    			}
+        				    			else if (i == cnt) {
+        				                    cur += ">";
+        				    			}
+        				    			else {
+        				                    cur += " ";
+        				    			}
+        				    		}
+        				            cur +="|" + p.pkt_id + "/" + totalPkts + "\r";
+        				    		System.out.printf(cur);
+        							
         							receiveBuffer.add(p);
         						}
     						}
@@ -177,6 +179,7 @@ public class Machine {
                         //Packet[] pkts = new Packet[pkt_total];
                 		Packet initPkt = new Packet(0);
                 		initPkt.destination_ip = destIP;
+                		initPkt.client_ip = clientIP;
                 		initPkt.msg_name = Integer.toString(pkt_total);
                 		initPkt.pkt_id = -1;
                 		buffer.add(initPkt);
@@ -228,20 +231,22 @@ public class Machine {
     	            						System.out.printf("Sent %d packets from %s",totalPkts, p.destination_ip);
     	            					}
     	            					else {
-    	            						System.out.printf("|");
-    	        							int cnt = (p.pkt_id/totalPkts)*20;
-    	        							for (int i=0; i<20; i++) {
-    	        								if (i < cnt) {
-    	        									System.out.printf("=");
-    	        								}
-    	        								else if (i == cnt) {
-    	        									System.out.printf(">");
-    	        								}
-    	        								else {
-    	        									System.out.printf(" ");
-    	        								}
-    	        							}
-    	        							System.out.printf("|\r");
+    	        							int cnt = Math.round(p.pkt_id*20/totalPkts);
+    	        							String cur = "|";
+    	        				            for (int i=0; i<20; i++) {
+    	        				    			if (i < cnt) {
+    	        				                    cur += "=";
+    	        				    			}
+    	        				    			else if (i == cnt) {
+    	        				                    cur += ">";
+    	        				    			}
+    	        				    			else {
+    	        				                    cur += " ";
+    	        				    			}
+    	        				    		}
+    	        				            cur +="|" + p.pkt_id + "/" + totalPkts + "\r";
+    	        				    		System.out.printf(cur);
+    	        							
     	            					}
     	            				}
     	            				catch (IOException e) {
