@@ -165,7 +165,7 @@ public class Machine_2 {
                     return;
                 }
                 
-                int pyld_size = 7;
+                int pyld_size = 1000;
                 final int pkt_total = file.length/pyld_size + (file.length%pyld_size == 0 ? 0 : 1);
                 //if (file.length%pyld_size != 0) pkt_total++;
                 System.out.printf("\nMessage Size: %d Payload Size: %d Total Packets: %d\n\n",file.length, pyld_size, pkt_total);
@@ -234,6 +234,7 @@ public class Machine_2 {
         				    		System.out.printf(cur);
         							
             					}
+            					Thread.sleep(1);
             				}
             				catch (IOException e) {
             					System.out.printf("Error sending packets: ");
