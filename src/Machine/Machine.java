@@ -184,15 +184,14 @@ public class Machine {
                 		initPkt.pkt_id = -1;
                 		buffer.add(initPkt);
                 		
-                        for (int i=0; i<pkt_total+1; i++){
+                        for (int i=0; i<pkt_total; i++){
                         	//System.out.println("Creating: " + i);
                             Packet pkt= new Packet(pyld_size);
                             pkt.client_name = "localhost";
                             pkt.client_ip = clientIP;
                             pkt.destination_ip = destIP;
-                            pkt.pkt_no = i;
-                            if (i == pkt_total) pkt.pkt_id = -1; 
-                            else pkt.pkt_id = i;
+                            pkt.pkt_no = i+1;
+                            pkt.pkt_id = i+1;
                             pkt.msg_name = path;
                             int j=0;
                             for (; j<pyld_size && index<file.length; j++){
@@ -228,7 +227,7 @@ public class Machine {
     	            						System.out.printf("Sending %d packets to %s", totalPkts, p.destination_ip);
     	            					}
     	            					else if (p.pkt_id == totalPkts) {
-    	            						System.out.printf("Sent %d packets from %s",totalPkts, p.destination_ip);
+    	            						System.out.printf("Sent %d packets to %s",totalPkts, p.destination_ip);
     	            					}
     	            					else {
     	        							int cnt = Math.round(p.pkt_id*20/totalPkts);
@@ -273,9 +272,6 @@ public class Machine {
                 
                 Thread sendPacketsThread = new Thread(sendPackets);
                 sendPacketsThread.start();
-                 
-                Thread receivePacketsThread = new Thread(receivePackets);
-                receivePacketsThread.start();
              
             }
             
