@@ -30,8 +30,7 @@ class ClientHandler implements Runnable {
     		Runnable receiver = new Runnable() {
                 @Override
                 public void run() {
-                    //System.out.println("Hello from thread " + Thread.currentThread().getName());
-                	System.out.println("Receiver Started on server!");
+
                 	while (true) {
                 			Packet p;
 							try {
@@ -58,8 +57,7 @@ class ClientHandler implements Runnable {
             Runnable sender = new Runnable() {
                 @Override
                 public void run() {
-                    //System.out.println("Hello from thread " + Thread.currentThread().getName());
-                	System.out.println("Sender Started on server!");
+
                 	while (true) {
                 		if (buffer.get(s.getInetAddress()).size() == 0) continue;
                 		synchronized (buffer) {

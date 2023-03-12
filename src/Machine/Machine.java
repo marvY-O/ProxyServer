@@ -27,21 +27,7 @@ public class Machine {
             System.out.print(s);
             ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
             ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
-            System.out.println("Connected to server ... ");
-            
-            /*
-            Packet p = new Packet(0);
-            p.msg_name = "GO FOR THE HEAD!!";
-            System.out.printf("IP AC: ");
-            p.destination_ip = sc.next();
-            
-            if (p.destination_ip.length() != 1) {
-            	oos.writeObject(p);
-            }
-            else {
-            	System.out.println("Listening for data!");
-            }
-            */
+            System.out.println("Connected to server!!");
             
             Runnable receivePackets = new Runnable() {
             	@Override
@@ -52,25 +38,45 @@ public class Machine {
             			try {
     						p = (Packet) ois.readObject();
     						if (p != null) {
-    							System.out.println("Got packet: "+p.pkt_id);
-    							if (p.pkt_id == -1) {
+        						receiveBuffer.add(p);
+        						if (p.pkt_id == -1) {
         							break;
         						}
-        						
-        						receiveBuffer.add(p);
     						}
     						
     						
     					} catch (ClassNotFoundException e) {
-
+    						System.out.printf("Error reading packets (Undefined Format): ");
+    						e.printStackTrace();
+    						try {
+    							oos.close();
+								ois.close();
+								s.close();
+							} catch (IOException e1) {
+								System.out.printf("Error closing connection: ");
+								e1.printStackTrace();
+							}
     					} catch (IOException e) {
-
+    						System.out.printf("Error receiving packets!!");
+    						e.printStackTrace();
+    						try {
+    							oos.close();
+								ois.close();
+								s.close();
+							} catch (IOException e1) {
+								System.out.printf("Error closing connection: ");
+								e1.printStackTrace();
+							}
+    						
     					}
             		}
+            		
             		System.out.println("Creating File!!");
             		Vector<Byte> file = new Vector<Byte>();
-            		//final String outputPath = receiveBuffer.peek().msg_name; 
-            		final String outputPath = "newOutFile.txt";
+            		final String outputPath = receiveBuffer.peek().msg_name; 
+            		//final String outputPath = "newOutFile.txt";
+            		
+            		System.out.printf("Received "+outputPath+"from "+receiveBuffer.peek().client_ip+"\n");
                     while (!receiveBuffer.isEmpty()){
                     	Packet pkt = receiveBuffer.poll();
                     	
@@ -88,9 +94,10 @@ public class Machine {
 	            		FileOutputStream fos = new FileOutputStream(outputPath);
 	                    fos.write(byteFile);
 	                    fos.close();
+	                    System.out.printf("File Saved to disk!\n");
                     }
                     catch(IOException e) {
-                    	System.out.println("Error Saving File!");
+                    	System.out.println("Error Saving file to disk!");
                     }
 					
             	}
@@ -127,6 +134,9 @@ public class Machine {
                 catch(IOException e) {
                     System.out.print("Exception while opening file: ");
                     e.printStackTrace();
+                    ois.close();
+                    oos.close();
+                    s.close();
                     return;
                 }
                 
@@ -149,7 +159,7 @@ public class Machine {
                             pkt.client_ip = clientIP;
                             pkt.destination_ip = destIP;
                             pkt.pkt_no = i;
-                            pkt.pkt_id = i; 
+                            if (i == pkt_total) pkt.pkt_id = -1; 
                             pkt.msg_name = path;
                             int j=0;
                             for (; j<pyld_size && index<file.length; j++){
@@ -163,11 +173,6 @@ public class Machine {
                             	buffer.add(pkt);
                             }
                         }
-                        Packet end = new Packet(0);
-                        end.pkt_id = -1;
-                        buffer.add(end);
-
-     
                 	}
                 };
                 
@@ -185,8 +190,18 @@ public class Machine {
     	            					oos.writeObject(buffer.poll());
     	            				}
     	            				catch (IOException e) {
-    	            					
-    	            				}
+    	            					System.out.printf("Error sending packets: ");
+    	            					e.printStackTrace();
+    	            		            
+    	            		            try {
+											s.close();
+											ois.close();
+	    	            		            oos.close();
+										} catch (IOException e1) {
+											System.out.printf("Error closing connection: ");
+											e1.printStackTrace();
+										}
+    	            				} 
     	            			}
     	            		}
                 		}
@@ -204,12 +219,9 @@ public class Machine {
              
             }
             
-              
-            //ois.close();
-            //oos.close();
-            //s.close();
             
         }catch(Exception e){
+        	System.out.printf("There was an error connecting to the server: ");
             e.printStackTrace();
         }
     }

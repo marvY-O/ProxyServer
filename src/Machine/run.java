@@ -1,11 +1,18 @@
 package Machine;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class run {
     public static void main (String args[]) throws IOException{
-    	System.out.println("Starting Machine...");
+    	Scanner sc = new Scanner(System.in);
+    	System.out.println("Enter IP Address of the server: ");
+    	//String ac_address = sc.next();
         String ac_address = "192.168.1.4";
-        int port = 5000;
+       
+        System.out.println("Enter IP Address of the server: ");
+    	//int port = sc.nextInt();
+        int  port = 5000;
+        
         Machine m = new Machine(ac_address, port);
         m.initiate();
     }
