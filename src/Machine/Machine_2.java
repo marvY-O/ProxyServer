@@ -3,6 +3,7 @@ import java.io.*;
 import java.util.*;
 import java.net.*; 
 import Message.*; 
+import org.apache.commons.lang3.ArrayUtils;
 
 public class Machine_2 {
     //private InetAddress selfAddress;
@@ -34,6 +35,7 @@ public class Machine_2 {
             	public void run() {
             		Packet p;
             		int totalPkts = 0;
+            		int byteLength = 0;
             		System.out.println("Recv Started!");
             		while (true) {
             			try {
@@ -41,6 +43,7 @@ public class Machine_2 {
     						if (p != null) {
         						if (p.pkt_id == -1) {
         							totalPkts = Integer.parseInt(p.msg_name);
+        							byteLength = p.pkt_no
         							System.out.println("Ready to receive "+totalPkts+" from "+p.client_ip);
         						}
         						else if (p.pkt_id == totalPkts) {
@@ -102,6 +105,7 @@ public class Machine_2 {
             		//final String outputPath = "newOutFile.txt";
             		
             		System.out.printf("Received "+outputPath+"from "+receiveBuffer.peek().client_ip+"\n");
+            		/*
                     while (!receiveBuffer.isEmpty()){
                     	Packet pkt = receiveBuffer.poll();
                     	
@@ -113,7 +117,16 @@ public class Machine_2 {
                     byte[] byteFile = new byte[file.size()];
                     for (int i=0; i<file.size(); i++) {
                     	byteFile[i] = (byte) file.elementAt(i);
-                    }
+                    }*/
+            		
+                   byte[] byteFile = new byte[byteLength];
+                   int i = 0;
+                   while (!receiveBuffer.isEmpty()){
+                   	Packet pkt = receiveBuffer.poll();
+                       for (int j=0; j<pkt.payload.length && i<byteLength; j++){
+                           byteFile[i++] = pkt.payload[j];
+                       }
+                   }
                     
                     try {
 	            		FileOutputStream fos = new FileOutputStream(outputPath);
@@ -145,7 +158,7 @@ public class Machine_2 {
                 
                 System.out.printf("IP of Destination: ");
                 //destIP = sc.next();
-                destIP = "192.168.1.7";
+                destIP = "192.168.1.27";
                 
                 byte[] file;
                 File fileobj = new File(path);
@@ -179,6 +192,7 @@ public class Machine_2 {
         		initPkt.client_ip = clientIP;
         		initPkt.msg_name = Integer.toString(pkt_total);
         		initPkt.pkt_id = -1;
+        		initPkt.pkt_no = file.length;
         		buffer.add(initPkt);
         		
                 for (int i=0; i<pkt_total; i++){
