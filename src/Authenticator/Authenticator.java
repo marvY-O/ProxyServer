@@ -18,12 +18,13 @@ public class Authenticator {
 
     public void start() throws IOException{
         ServerSocket ss = new ServerSocket(port);
+
         while (true){
             Socket s = null; 
             try {
                 s = ss.accept();
-                System.out.println("A new client is connected : " );
-                System.out.println(s.getInetAddress());
+                System.out.printf("A new client is connected : %s\n", (String) s.getInetAddress().getHostAddress());
+                //System.out.println();
                 
                 synchronized (buffer) {
                 	buffer.put(s.getInetAddress(), new LinkedList<Packet>());

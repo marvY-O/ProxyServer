@@ -8,7 +8,7 @@ public class dbUsers {
         try {
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:users.db");
-            System.out.println("Connection to SQLite database established.");
+
             String sql = "SELECT password FROM users WHERE name = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, username);

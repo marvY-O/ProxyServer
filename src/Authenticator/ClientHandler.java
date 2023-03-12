@@ -35,8 +35,6 @@ class ClientHandler implements Runnable {
     	ObjectInputStream ois;
 
         try{
-        	
-        	System.out.println("Thread started!");
     		
     		oos = new ObjectOutputStream(s.getOutputStream());
     		ois = new ObjectInputStream(s.getInputStream());
@@ -56,8 +54,7 @@ class ClientHandler implements Runnable {
     		if (dbUsers.verify(cert.username, cert.password)) {
     			cert.CertificateID = generate();
     			certIDStore.put(s.getInetAddress(), cert.CertificateID);
-    			System.out.print(s.getInetAddress());
-    			System.out.print(cert.CertificateID + "\n");
+    			System.out.printf("%s -> %s\n", s.getInetAddress().getHostAddress(), cert.CertificateID);
     		}
     		else {
     			cert.CertificateID = "NULL";
@@ -76,7 +73,7 @@ class ClientHandler implements Runnable {
 								//if (p.destination_ip == InetAddress.getLocalHost().getHostAddress());
 								InetAddress destAddr = InetAddress.getByName(p.destination_ip);
 								if (!p.cert_id.equals(certIDStore.get(s.getInetAddress()))){
-									System.out.println("FALSE Security Certificate ID!!");
+									System.out.println("FALSE SECURITY CERTIFICATE ID!!");
 									continue;
 								}
 								synchronized (buffer) {
