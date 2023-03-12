@@ -3,7 +3,7 @@ import java.io.*;
 import java.util.*;
 import java.net.*; 
 import Message.*; 
-import org.apache.commons.lang3.ArrayUtils;
+//import org.apache.commons.lang3.ArrayUtils;
 
 public class Machine_2 {
     //private InetAddress selfAddress;
@@ -43,7 +43,7 @@ public class Machine_2 {
     						if (p != null) {
         						if (p.pkt_id == -1) {
         							totalPkts = Integer.parseInt(p.msg_name);
-        							byteLength = p.pkt_no
+        							byteLength = p.pkt_no;
         							System.out.println("Ready to receive "+totalPkts+" from "+p.client_ip);
         						}
         						else if (p.pkt_id == totalPkts) {
@@ -102,22 +102,8 @@ public class Machine_2 {
             		System.out.println("Creating File!!");
             		Vector<Byte> file = new Vector<Byte>();
             		final String outputPath = receiveBuffer.peek().msg_name; 
-            		//final String outputPath = "newOutFile.txt";
             		
             		System.out.printf("Received "+outputPath+"from "+receiveBuffer.peek().client_ip+"\n");
-            		/*
-                    while (!receiveBuffer.isEmpty()){
-                    	Packet pkt = receiveBuffer.poll();
-                    	
-                        for (int j=0; j<pkt.payload.length && pkt.payload[j] != (byte)'\0'; j++){
-                            file.add((Byte) pkt.payload[j]);
-                        }
-                    }
-                    
-                    byte[] byteFile = new byte[file.size()];
-                    for (int i=0; i<file.size(); i++) {
-                    	byteFile[i] = (byte) file.elementAt(i);
-                    }*/
             		
                    byte[] byteFile = new byte[byteLength];
                    int i = 0;
@@ -141,7 +127,35 @@ public class Machine_2 {
             	}
             };
             
+            String user, pass, certID;
+            SecurityCertificate cert = new SecurityCertificate();
             
+            System.out.printf("Enter username: ");
+            cert.username = sc.next();
+            
+            System.out.printf("Enter password: ");
+            cert.password = sc.next();
+            
+            oos.writeObject(cert);
+            
+            //SecurityCertificate cert;
+    		while (true) {
+    			try {
+    				cert = (SecurityCertificate) ois.readObject();
+    				if (cert != null) break;
+    			} catch(IOException e) {
+    				
+    			} catch(ClassNotFoundException e) {
+    				
+    			}
+    		}
+    		
+    		if (cert.CertificateID.equals("NULL")) {
+    			System.out.println("Wrong Credentials provided!!");
+    			return;
+    		}	
+            
+    		certID = cert.CertificateID;
             
             System.out.printf("Recieve file(y) or send file(n)?");
             String ans = sc.next();
@@ -153,8 +167,8 @@ public class Machine_2 {
             	String path, destIP, clientIP = InetAddress.getByName("localhost").getHostAddress();
                 
                 System.out.printf("Name file to send: ");
-                //path = sc.next();
-                path = "test.jpg";
+                path = sc.next();
+                //path = "test.jpg";
                 
                 System.out.printf("IP of Destination: ");
                 //destIP = sc.next();
@@ -180,13 +194,12 @@ public class Machine_2 {
                 
                 int pyld_size = 1000;
                 final int pkt_total = file.length/pyld_size + (file.length%pyld_size == 0 ? 0 : 1);
-                //if (file.length%pyld_size != 0) pkt_total++;
+
                 System.out.printf("\nMessage Size: %d Payload Size: %d Total Packets: %d\n\n",file.length, pyld_size, pkt_total);
                 
                 
 
         		int index = 0;
-                //Packet[] pkts = new Packet[pkt_total];
         		Packet initPkt = new Packet(0);
         		initPkt.destination_ip = destIP;
         		initPkt.client_ip = clientIP;
@@ -196,7 +209,6 @@ public class Machine_2 {
         		buffer.add(initPkt);
         		
                 for (int i=0; i<pkt_total; i++){
-                	//System.out.println("Creating: " + i);
                     Packet pkt= new Packet(pyld_size);
                     pkt.client_name = "localhost";
                     pkt.client_ip = clientIP;
@@ -204,6 +216,7 @@ public class Machine_2 {
                     pkt.pkt_no = i+1;
                     pkt.pkt_id = i+1;
                     pkt.msg_name = path;
+                    pkt.cert_id = certID;
                     int j=0;
                     for (; j<pyld_size && index<file.length; j++){
                         pkt.payload[j] = (byte) file[index];

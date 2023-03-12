@@ -6,4 +6,5 @@
  *
  */
 module mhopsys {
+	requires java.sql;
 }
