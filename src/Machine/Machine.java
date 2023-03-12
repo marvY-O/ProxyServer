@@ -33,14 +33,37 @@ public class Machine {
             	@Override
             	public void run() {
             		Packet p;
+            		int totalPkts = 0;
             		System.out.println("Recv Started!");
             		while (true) {
             			try {
     						p = (Packet) ois.readObject();
     						if (p != null) {
-        						receiveBuffer.add(p);
         						if (p.pkt_id == -1) {
+        							totalPkts = Integer.parseInt(p.msg_name);
+        							System.out.println("Ready to receive "+totalPkts+" from "+p.client_ip);
+        						}
+        						else if (p.pkt_id == totalPkts) {
+        							buffer.add(p);
+        							System.out.printf("Received %d packets from %s",totalPkts, p.client_ip);
         							break;
+        						}
+        						else {
+        							System.out.printf("|");
+        							int cnt = (p.pkt_id/totalPkts)*20;
+        							for (int i=0; i<20; i++) {
+        								if (i < cnt) {
+        									System.out.printf("=");
+        								}
+        								else if (i == cnt) {
+        									System.out.printf(">");
+        								}
+        								else {
+        									System.out.printf(" ");
+        								}
+        							}
+        							System.out.printf("|\r");
+        							receiveBuffer.add(p);
         						}
     						}
     						
@@ -152,8 +175,14 @@ public class Machine {
                 	public void run() {
                 		int index = 0;
                         //Packet[] pkts = new Packet[pkt_total];
+                		Packet initPkt = new Packet(0);
+                		initPkt.destination_ip = destIP;
+                		initPkt.msg_name = Integer.toString(pkt_total);
+                		initPkt.pkt_id = -1;
+                		buffer.add(initPkt);
+                		
                         for (int i=0; i<pkt_total+1; i++){
-                        	System.out.println("Creating: " + i);
+                        	//System.out.println("Creating: " + i);
                             Packet pkt= new Packet(pyld_size);
                             pkt.client_name = "localhost";
                             pkt.client_ip = clientIP;
@@ -183,15 +212,36 @@ public class Machine {
                 Runnable sendPackets = new Runnable() {
                 	@Override
                 	public void run() {
+                		int totalPkts = 0;
                 		while (true) {
     	            		synchronized(buffer) {
     	            			if (!buffer.isEmpty()) {
     	            				try {
     	            					//System.out.println("Sent: " + buffer.peek().pkt_id);
-    	            					int cur = buffer.peek().pkt_id;
+    	            					Packet p = buffer.peek();
     	            					oos.writeObject(buffer.poll());
-    	            					if (cur == -1) {
-    	            						System.out.printf("Packets sent successfully!!");
+    	            					if (p.pkt_id == -1) {
+    	            						totalPkts = Integer.parseInt(p.msg_name);
+    	            						System.out.printf("Sending %d packets to %s", totalPkts, p.destination_ip);
+    	            					}
+    	            					else if (p.pkt_id == totalPkts) {
+    	            						System.out.printf("Sent %d packets from %s",totalPkts, p.destination_ip);
+    	            					}
+    	            					else {
+    	            						System.out.printf("|");
+    	        							int cnt = (p.pkt_id/totalPkts)*20;
+    	        							for (int i=0; i<20; i++) {
+    	        								if (i < cnt) {
+    	        									System.out.printf("=");
+    	        								}
+    	        								else if (i == cnt) {
+    	        									System.out.printf(">");
+    	        								}
+    	        								else {
+    	        									System.out.printf(" ");
+    	        								}
+    	        							}
+    	        							System.out.printf("|\r");
     	            					}
     	            				}
     	            				catch (IOException e) {
