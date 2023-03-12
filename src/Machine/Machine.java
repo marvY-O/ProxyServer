@@ -116,7 +116,7 @@ public class Machine {
                 
                 System.out.printf("Name file to send: ");
                 //path = sc.next();
-                path = "test.txt";
+                path = "test.jpg";
                 
                 System.out.printf("IP of Destination: ");
                 //destIP = sc.next();
@@ -160,6 +160,7 @@ public class Machine {
                             pkt.destination_ip = destIP;
                             pkt.pkt_no = i;
                             if (i == pkt_total) pkt.pkt_id = -1; 
+                            else pkt.pkt_id = i;
                             pkt.msg_name = path;
                             int j=0;
                             for (; j<pyld_size && index<file.length; j++){
@@ -186,8 +187,12 @@ public class Machine {
     	            		synchronized(buffer) {
     	            			if (!buffer.isEmpty()) {
     	            				try {
-    	            					System.out.println("Sent: " + buffer.peek().pkt_id);
+    	            					//System.out.println("Sent: " + buffer.peek().pkt_id);
+    	            					int cur = buffer.peek().pkt_id;
     	            					oos.writeObject(buffer.poll());
+    	            					if (cur == -1) {
+    	            						System.out.printf("Packets sent successfully!!");
+    	            					}
     	            				}
     	            				catch (IOException e) {
     	            					System.out.printf("Error sending packets: ");
