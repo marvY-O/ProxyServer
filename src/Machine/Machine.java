@@ -32,7 +32,7 @@ public class Machine{
             System.out.printf("Connected to server %s:%d\n", ac_address, ac_port);
             
             
-            String user, pass, certID;
+            String certID;
             SecurityCertificate cert = new SecurityCertificate();
             
             System.out.printf("Enter username: ");

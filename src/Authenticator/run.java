@@ -28,3 +28,5 @@ public class run {
         
     }
 }
+//java --module-path bin -cp sqlite-jdbc-3.41.0.0.jar -m Authenticator.run 
+
