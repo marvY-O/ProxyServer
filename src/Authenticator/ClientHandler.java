@@ -54,11 +54,12 @@ class ClientHandler implements Runnable {
     		if (dbUsers.verify(cert.username, cert.password)) {
     			cert.CertificateID = generate();
     			certIDStore.put(s.getInetAddress(), cert.CertificateID);
-    			System.out.printf("%s -> %s\n", s.getInetAddress().getHostAddress(), cert.CertificateID);
     		}
     		else {
     			cert.CertificateID = "NULL";
     		}
+
+			System.out.printf("%s -> %s\n", s.getInetAddress().getHostAddress(), cert.CertificateID);
     		
     		oos.writeObject(cert);
     		
@@ -71,6 +72,9 @@ class ClientHandler implements Runnable {
 							try {
 								p = (Packet) ois.readObject();
 								//if (p.destination_ip == InetAddress.getLocalHost().getHostAddress());
+								if (p.pkt_id == -1){
+									System.out.printf("%s sending file to %s\n", p.client_ip, p.destination_ip);
+								}
 								InetAddress destAddr = InetAddress.getByName(p.destination_ip);
 								if (!p.cert_id.equals(certIDStore.get(s.getInetAddress()))){
 									System.out.println("FALSE SECURITY CERTIFICATE ID!!");
